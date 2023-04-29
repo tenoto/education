@@ -9,7 +9,14 @@ plt.rcParams["markers.fillstyle"] = "full"
 
 # データの読み込み
 data = np.loadtxt('input.data')
-x, y, dx, dy = data[:,0], data[:,1], data[:,2], data[:,3]
+x, y, dx, dy, atom = data[:,0], data[:,1], data[:,2], data[:,3], data[:,4]
+
+"""
+atom
+1:Na
+2:Hg
+3:Cd
+"""
 
 # フィッティング関数
 def fitting_func(x, a, b):
@@ -29,28 +36,36 @@ a_err, b_err = np.sqrt(np.diag(pcov))
 xfit = np.linspace(1.5, 4.5, 100)
 yfit = fitting_func(xfit, a, b)
 ax.plot(xfit, yfit, 'r--', label='Fit: $y = ax^{-2} + b$')
-ax.errorbar(x, y, xerr=dx, yerr=dy, 
+ax.errorbar(x[atom==1], y[atom==1], xerr=dx[atom==1], yerr=dy[atom==1], 
+	fmt='s', capsize=0, markersize=6, alpha=1.0,
+	markerfacecolor='k',markeredgecolor='k',
+	label='Na')
+ax.errorbar(x[atom==2], y[atom==2], xerr=dx[atom==2], yerr=dy[atom==2], 
 	fmt='o', capsize=0, markersize=6, alpha=1.0,
-	markerfacecolor=None,markeredgecolor='k',
-	label='Measurement')
+	markerfacecolor='k',color='k',markeredgecolor='k',
+	label='Hg')
+ax.errorbar(x[atom==3], y[atom==3], xerr=dx[atom==3], yerr=dy[atom==3], 
+	fmt='^', capsize=0, markersize=6, alpha=1.0,
+	markerfacecolor='k',color='k',markeredgecolor='k',
+	label='Cd')
 
 # 軸の範囲の設定
 ax.set_xlim(1.5, 4.5)
 ax.set_ylim(400, 700)
 
 # ラベルの設定
-ax.set_xlabel('Scale (cm)')
+ax.set_xlabel('Scale')
 ax.set_ylabel('Wavelength (nm)',labelpad=15)
 
 # グリッドの表示
 ax.grid(True)
 
 # 凡例の表示
-legend_text = f'a = {a:.1f} $\pm$ {a_err:.1f} nm*cm$^2$\nb = {b:.1f} $\pm$ {b_err:.1f} nm'
+legend_text = f'a = {a:.1f} $\pm$ {a_err:.1f} nm\nb = {b:.1f} $\pm$ {b_err:.1f} nm'
 ax.legend(title=legend_text)
 
 # 保存
-plt.savefig('sample.pdf')
+plt.savefig('ex10_plot_scale_vs_wavelength.pdf')
 
 """
 以下の要求を満たす python コードを出力して下さい。

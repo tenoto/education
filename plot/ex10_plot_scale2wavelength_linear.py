@@ -9,7 +9,7 @@ plt.rcParams["markers.fillstyle"] = "full"
 
 # データの読み込み
 data = np.loadtxt('input.data')
-s, l, ds, dl = data[:,0], data[:,1], data[:,2], data[:,3]
+s, l, ds, dl, atom = data[:,0], data[:,1], data[:,2], data[:,3], data[:,4]
 
 l0 = 589.6
 xerr=np.full(len(s),1.5/l0)
@@ -32,10 +32,21 @@ a_err, b_err = np.sqrt(np.diag(pcov))
 xfit = np.linspace(0.0,2.0,100)
 yfit = fitting_func(xfit, a, b)
 ax.plot(xfit, yfit, 'r--', label=r'Fit: scale$ = a(\lambda/\lambda_0)^{-2} + b$')
-ax.errorbar(1/(l/l0)**2, s, xerr=xerr, yerr=ds, 
+ax.errorbar(1/(l[atom==1]/l0)**2, s[atom==1], 
+	xerr=xerr[atom==1], yerr=ds[atom==1], 
+	fmt='s', capsize=0, markersize=6, alpha=1.0,
+	markerfacecolor='k',markeredgecolor='k',
+	label='Na')
+ax.errorbar(1/(l[atom==2]/l0)**2, s[atom==2], 
+	xerr=xerr[atom==2], yerr=ds[atom==2], 
 	fmt='o', capsize=0, markersize=6, alpha=1.0,
-	markerfacecolor=None,markeredgecolor='k',
-	label='Measurement')
+	markerfacecolor='k',color='k',markeredgecolor='k',
+	label='Hg')
+ax.errorbar(1/(l[atom==3]/l0)**2, s[atom==3], 
+	xerr=xerr[atom==3], yerr=ds[atom==3], 
+	fmt='^', capsize=0, markersize=6, alpha=1.0,
+	markerfacecolor='k',color='k',markeredgecolor='k',
+	label='Cd')
 
 # 軸の範囲の設定
 ax.set_xlim(0.0,2.0)
@@ -43,15 +54,15 @@ ax.set_ylim(0.0,5.0)
 
 # ラベルの設定
 ax.set_xlabel(r'$(\lambda/\lambda_0)^{-2}$')
-ax.set_ylabel('Scale (cm)',labelpad=15)
+ax.set_ylabel('Scale',labelpad=15)
 
 # グリッドの表示
 ax.grid(True)
 
 # 凡例の表示
-legend_text = f'$\lambda_0$ = {l0:.1f} nm\na = {a:.2f} $\pm$ {a_err:.2f} cm\nb = {b:.2f} $\pm$ {b_err:.2f} cm'
+legend_text = f'$\lambda_0$ = {l0:.1f} nm (Na D)\na = {a:.2f} $\pm$ {a_err:.2f} cm\nb = {b:.2f} $\pm$ {b_err:.2f} cm'
 ax.legend(title=legend_text)
 
 # 保存
-plt.savefig('sample2.pdf')
+plt.savefig('ex10_plot_scale2wavelength_linear.pdf')
 
